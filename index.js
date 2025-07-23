@@ -1,17 +1,22 @@
-import express from 'express'
-import db from './src/models'
-import UserControllers from "./src/controllers/user";
-const app = express (); 
+import express from "express";
+import db from "./src/models";
+import UserController from "./src/controllers/user";
+const app = express();
 
-
-
-app.post("/", UserControllers.create);
+app.use(express.json());
+app.post("/", UserController.create);
 
 app.listen(3333, async () => {
   try {
     await db.sequelize.authenticate();
-    console.log('aplicativo em execução e banco de dados conectado');
+    console.log("Banco de dados conectado.");
   } catch (error) {
-    console.log("Error running app:" , error);
+    console.log("Erro ao conectar com o banco de dados: ", error);
   }
-}); 
+});
+
+
+
+
+
+
