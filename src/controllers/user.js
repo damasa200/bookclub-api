@@ -1,8 +1,64 @@
 import { User } from "../models";
 import * as yup from 'yup';
 import bcrypt from 'bcrypt';
+import jwt from "jsonwebtoken";
+
 
 class UserController {
+  async login(req,res){
+    try {
+      const schema = yup.object().shape({
+      email: yup.string()
+        .email('E-mail inválido.')
+        .required('E-mail é obrigatório.'),
+      password: yup.string()
+        .required('Senha é obrigatória.')
+        .min(6, 'Senha deve ter no mínimo 6 caracteres.'),
+      })
+
+      await schema.validate(req.body, {abortEarly: false});
+
+      const user = await User.findOne({where:{email:req.body.email}});
+      if(!user){
+        return res.status(401).json({error:"E-mail ou senha não conferem."});
+      }
+      const checkPassword = await bcrypt.compare(
+        req.body.password,
+        user.password_hash
+      );
+
+      if(!checkPassword){
+        return res.status(401).json({error: "E-mail ou senha não conferem."});
+      }
+
+      console.log({hash:process.env.JWT_HASH})
+      
+      const token = jwt.sign({id: user.id}, process.env.JWT_HASH,{
+        expiresIn: "30d",
+      });
+
+      const {id, name, email, avatar_url, createdat}= user;
+      return res.json({
+        user:{
+          id,
+          name,
+          email,
+          avatar_url,
+          createdat
+        },            
+        token,
+
+
+      });
+
+      
+
+
+     } catch (error){
+      return res.status(400).json({error:error?.message});
+    }
+  }
+
   async create(req, res) {
     const schema = yup.object().shape({
       name: yup.string()
@@ -13,7 +69,7 @@ class UserController {
         .required('E-mail é obrigatório.'),
       password: yup.string()
         .required('Senha é obrigatória.')
-        .min(6, 'Senha deve ter no mínimo 6 caracteres.')
+        .min(6, 'Senha deve ter no mínimo 6 caracteres.'),
     });
 
     try {
