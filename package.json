@@ -11,11 +11,14 @@
   "license": "ISC",
   "dependencies": {
     "bcrypt": "^6.0.0",
+    "date-fns": "^4.1.0",
     "dotenv": "^17.2.0",
     "express": "^5.1.0",
     "jsonwebtoken": "^9.0.2",
+    "node-mailjet": "^6.0.8",
     "pg": "^8.16.3",
     "pg-hstore": "^2.3.4",
+    "resend": "^4.7.0",
     "sequelize": "^6.37.7",
     "yup": "^1.6.1"
   },

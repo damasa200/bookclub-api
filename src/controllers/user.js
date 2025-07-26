@@ -2,6 +2,9 @@ import { User } from "../models";
 import * as yup from 'yup';
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
+import  where  from "sequelize";
+import Mail from '../libs/Mail';
+import { differenceInHours } from "date-fns";
 
 
 class UserController {
@@ -47,18 +50,12 @@ class UserController {
           createdat
         },            
         token,
-
-
-      });
-
-      
-
+      });     
 
      } catch (error){
       return res.status(400).json({error:error?.message});
     }
   }
-
   async create(req, res) {
     const schema = yup.object().shape({
       name: yup.string()
@@ -128,6 +125,116 @@ class UserController {
   }
 }
 
+   async forgotPassword(req,res) {
+       try {
+        const schema = yup.object().shape({
+          email:yup.string()
+            .email("E-mail inválido")
+            .required("E-mail é obrigatório"),  
+          
+        });
+
+        await schema. validate(req.body);
+        const user = await User.findOne({where: {email: req.body.email}});
+
+        if(!user){
+          return res.status(400).json({error: "Usuário não existe"});
+        }
+
+
+
+
+         const { email, name } = user;
+         const token = Math.random().toString().slice(2, 8);
+         const reset_password_token = await bcrypt.hash(token, 8);
+
+        //  const reset_password_sent_at = new Date(); // <-- nome corrigido
+
+        //  const token = Math.random().toString().slice(2,8);
+        //  const reset_password_token = await bcrypt.hash(token, 8);
+
+         await user.update({         
+         reset_password_token,
+         reset_password_sent_at: new Date(),  // agora está correto
+        });
+
+        console.log("Token gerado:", token);
+
+        // await Mail.sendEmail(email, name, token);
+        // const mailResult = await Mail.sendEmail(email,name,token)
+
+
+        // Enviar o e-mail via Resend
+        await Mail.sendEmail(user.email, {
+        name,
+        token,
+        }); 
+
+           return res.json({ success: true, message: "E-mail enviado com sucesso." });
+         } catch (error) {
+           return res.status(500).json({ error: "Falha ao enviar e-mail de teste.", details: error.message });
+      }
+     }
+     async resetPassword (req, res) {
+      try{
+        const schema = yup.object().shape({
+          email:yup.string()
+            .email("E-mail inválido")
+            .required("E-mail é obrigatório"), 
+          token: yup.string().required('Token é Obrigatório'),
+          password: yup.string()
+            .required('Senha é obrigatória.')
+            .min(6, 'Senha deve ter no mínimo 6 caracteres.'),
+           
+        });
+
+        await schema.validate(req.body);
+        const user = await User.findOne({where: {email: req.body.email}});
+
+        if(!user){
+          return res.status(400).json({error: "Usuário não existe"});
+        }
+
+        if (!user.reset_password_token || !user.reset_password_sent_at) {
+           return res.status(404).json({ error: 'Alteração de senha não foi solicitada' });
 }
 
-export default new UserController();
+
+        const hoursDifference = differenceInHours (
+          new Date(),
+          user.reset_password_sent_at,          
+        );
+
+        if(hoursDifference > 3){
+          return res.status(401).json({ error: "Token expirado"});
+        }                
+
+        console.log({hoursDifference});
+
+        const checkToken = await bcrypt.compare(
+        req.body.token,
+        user.reset_password_token
+      );
+
+        if(!checkToken){
+        return res.status(401).json({error: "Token inválido."});
+      }
+
+      const password_hash =await bcrypt.hash(req.body.password, 8);
+      await user.update({
+          password_hash,
+          reset_password_token: null,
+          reset_password_sent_at: null,
+        });
+
+      console.log({checkToken});
+      return res.status(200).json({sucess:true});
+      } catch (error){
+        return res.status(400).json({error: error?.message});
+
+
+      }
+
+     }
+    }
+    export default new UserController();
