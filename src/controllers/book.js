@@ -47,7 +47,7 @@ class BookController {
             as:"author",
           },
           {
-            model:Category,
+            model: Category,
             as: "category",
           }, 
         ],
