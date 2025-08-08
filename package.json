@@ -1,0 +1,36 @@
+{
+  "name": "bookclub-api",
+  "version": "1.0.0",
+  "description": "\"api do bookclub usando Node.js e Sequelize\"",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start:dev": "nodemon ./src/index.js",
+    "start": "node dist/index.js",
+    "build": "sucrase ./src -d ./dist --transforms imports && cpx ./src/config/config.json ./dist/config"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@aws-sdk/client-s3": "^3.858.0",
+    "aws-sdk": "^2.1692.0",
+    "bcrypt": "^6.0.0",
+    "cors": "^2.8.5",
+    "cpx": "^1.5.0",
+    "date-fns": "^4.1.0",
+    "dotenv": "^17.2.0",
+    "express": "^5.1.0",
+    "jsonwebtoken": "^9.0.2",
+    "node-mailjet": "^6.0.8",
+    "pg": "^8.16.3",
+    "pg-hstore": "^2.3.4",
+    "resend": "^4.7.0",
+    "sequelize": "^6.37.7",
+    "yup": "^1.6.1"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.10",
+    "sequelize-cli": "^6.6.3",
+    "sucrase": "^3.35.0"
+  }
+}
