@@ -1,6 +1,9 @@
-import jwt from 'jsonwebtoken';
-
 export default async (req, res, next) => {
+  if (req.method === 'OPTIONS') {
+    // Responde imediatamente para preflight
+    return res.sendStatus(204);
+  }
+
   const authHeader = req.headers.authorization;
 
   if (!authHeader) {
