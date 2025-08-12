@@ -10,7 +10,7 @@ const app = express();
 
 // Ativa o CORS para o domínio do seu frontend
 app.use(cors({
-  origin: ['http://localhost:3000', 'https://booclub.damaso.com.br'],
+  origin: ['http://localhost:3000', 'https://api.booclub.damaso.com.br'],
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'], // Inclui OPTIONS
   allowedHeaders: ['Content-Type', 'Authorization'], // Permite enviar o token
   credentials: true,

@@ -3,7 +3,7 @@ import cors from "cors";
 
 const allowedOrigins = [
   "http://localhost:3000",
-  "https://booclub.damaso.com.br"
+  "https://api.booclub.damaso.com.br"
 ];
 
 export const corsOptions = {
