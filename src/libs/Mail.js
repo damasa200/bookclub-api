@@ -6,7 +6,7 @@ class Mail {
   async sendEmail(email, data,) {
     try {
       const result = await resend.emails.send({
-        from: 'onboarding@resend.dev', // você pode trocar depois por seu domínio
+        from: 'noreply@send.booclub.damaso.com.br', // você pode trocar depois por seu domínio
          to: email,
         subject: 'Recuperação de senha',
         html: `
