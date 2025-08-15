@@ -1,10 +1,14 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
+import testEmailRoute from './routes/testEmail.js';
+
+
 
 import express from "express";
 import cors from "cors";
 import db from "./models";
 import routes from './routes'; 
+
 
 const app = express();
 
@@ -18,6 +22,7 @@ app.use(cors({
 
 app.use(express.json());
 app.use(routes);
+// app.use(testEmailRoute);
 
 app.listen(3333, async () => {
   try {
