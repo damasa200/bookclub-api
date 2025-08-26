@@ -1,32 +1,40 @@
-import { Resend } from 'resend';
-import dotenv from 'dotenv';
+import Mailjet from "node-mailjet";
 
-dotenv.config(); // garante que o .env seja carregado
+const mailjet = Mailjet.apiConnect(
+  process.env.MAILJET_API_KEY,
+  process.env.MAILJET_API_SECRET
+);
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
-class Mail {
-  async sendEmail(email, data) {
-    try {
-      const result = await resend.emails.send({
-        from: 'noreply@send.booclub.damaso.com.br', // domínio verificado no Resend
-        to: email,
-        subject: 'Recuperação de senha',
-        html: `
-          <h3>Olá, ${data.name}</h3>
-          <p>Use o código abaixo para redefinir sua senha:</p>
-          <h2>${data.token}</h2>
-          <p>Esse código expira em alguns minutos.</p>
-        `,
+export const sendEmail = async (email, name, token) => {
+  try {
+    const request = await mailjet
+      .post("send", { version: "v3.1" })
+      .request({
+        Messages: [
+          {
+            From: {
+              Email: "contato@damaso.com.br",
+              Name: "Equipe BookClub",
+            },
+            To: [
+              {
+                Email: email,
+                Name: name,
+              },
+            ],
+             TemplateID: 7254961,
+             TemplateLanguage: true,
+             Subject: "Alteração de senha",
+             Variables: {
+				     token: token,
+				     name: name
+            },
+          },
+        ],
       });
 
-      console.log('E-mail enviado com sucesso:', result);
-      return result;
-    } catch (error) {
-      console.error('Erro ao enviar e-mail:', error);
-      throw error; // melhor lançar o erro para tratar na rota
-    }
+    console.log("Email enviado com sucesso:", request.body);
+  } catch (err) {
+    console.error("Erro ao enviar email:", err);
   }
-}
-
-export default new Mail();
+};

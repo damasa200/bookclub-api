@@ -2,8 +2,7 @@ import { User } from "../models";
 import * as yup from 'yup';
 import bcrypt from 'bcrypt';
 import jwt from "jsonwebtoken";
-import  where  from "sequelize";
-import Mail from '../libs/Mail';
+import { sendEmail } from "../libs/Mail.js";
 import { differenceInHours } from "date-fns";
 import UploadImage  from '../libs/Uploadimage';
 
@@ -242,13 +241,11 @@ async updateAvatar(req,res){ // Avatar
          reset_password_sent_at: new Date(),  // agora está correto
         });
 
-        console.log("Token gerado:", token);    
+        console.log("Token gerado:", token);      
 
         
-        await Mail.sendEmail(user.email, { // Enviar o e-mail via Resend
-        name,
-        token,
-        }); 
+        await sendEmail(email, name, token);  // Enviar o e-mail via Mailjet
+      
 
            return res.json({ success: true, message: "E-mail enviado com sucesso." });
          } catch (error) {
