@@ -1,5 +1,5 @@
 import { where } from "sequelize";
-import{ User, Book, UserBook, Author} from "../models";
+import{ User, Book, UserBook, Author} from "../models/index.js";
 import*as yup from "yup";
 
 

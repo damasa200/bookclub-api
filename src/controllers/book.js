@@ -1,5 +1,5 @@
 import { where } from "sequelize";
-import { Book, Category, Author } from "../models"; // Corrigido: Categories → Category
+import { Book, Category, Author } from "../models/index.js"; // Corrigido: Categories → Category
 import * as Yup from "yup";
 
 class BookController {

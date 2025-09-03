@@ -1,5 +1,5 @@
 import { Model } from "sequelize";
-import { Author,Book } from "../models";
+import { Author,Book } from "../models/index.js";
 import * as Yup from "yup";
 
 class AuthorController {

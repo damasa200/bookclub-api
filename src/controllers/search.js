@@ -1,4 +1,4 @@
-import { Book, Author} from "../models";
+import { Book, Author} from "../models/index.js";
 import {Op, where} from "sequelize";
 
 class SearchController{ 
