@@ -1,6 +1,6 @@
 import * as dotenv from 'dotenv';
 dotenv.config();
-import testEmailRoute from './routes/testEmail.js';
+
 
 
 
